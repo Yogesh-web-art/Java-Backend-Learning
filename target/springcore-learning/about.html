@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A guided introduction to the Spring Framework Core container, dependency injection, beans, AOP, and related services.">
+  <title>About SpringCore</title>
+  <link rel="stylesheet" href="styles.css?v=20261013-6">
+</head>
+<body>
+  <header class="topbar">
+    <h1>About SpringCore</h1>
+    <p>A practical guide to the core ideas and services of the Spring Framework: objects, configuration, lifecycle, and the container that connects them.</p>
+  </header>
+  <main class="container layout">
+    <aside class="toc">
+      <strong>On this page</strong>
+      <nav aria-label="Page contents">
+        <a href="#overview">Overview</a><a href="#ioc">IoC and DI</a><a href="#container">The container</a>
+        <a href="#beans">Beans and metadata</a><a href="#configuration">Configuration</a><a href="#lifecycle">Lifecycle and scopes</a>
+        <a href="#services">Core services</a><a href="#aop">AOP</a><a href="#modules">Modules and integration</a>
+        <a href="#testing">Testing</a><a href="#practice">Best practices</a><a href="#glossary">Glossary</a>
+      </nav>
+    </aside>
+    <div>
+      <section class="card" id="overview">
+        <h2>1. What is Spring Core?</h2>
+        <p>Spring is an open-source Java framework for building applications. <strong>Spring Core</strong> is the foundation of the Spring Framework: it supplies the IoC container, dependency injection (DI), bean configuration and lifecycle, and common utilities used by higher-level Spring modules.</p>
+        <p>Instead of application classes constructing and locating every collaborator themselves, Spring can create objects, connect their dependencies, and manage their lifecycle. This reduces coupling and makes components easier to configure, replace, and test.</p>
+        <div class="callout"><strong>In one sentence:</strong> Spring Core manages application objects and their relationships from configuration, so application code can focus on behavior rather than wiring.</div>
+        <h3>What Spring Core is—and is not</h3>
+        <p>Spring Core is not a programming language, a replacement for the JVM, or a complete application by itself. It is the framework foundation. Spring MVC, Spring Data, Spring Security, Spring Boot, and other projects build on or integrate with the Spring Framework; they are related, but are not all Spring Core features.</p>
+      </section>
+
+      <section class="card" id="ioc">
+        <h2>2. Inversion of Control and Dependency Injection</h2>
+        <h3>Inversion of Control (IoC)</h3>
+        <p>Without a container, a class often creates its own dependencies with <code>new</code>. With IoC, control of object creation and assembly is moved from application code to a framework or container. The application describes components and their relationships; the container supplies them.</p>
+        <h3>Dependency Injection (DI)</h3>
+        <p>DI is a common way to implement IoC. A class declares what it needs, and Spring provides those dependencies. For example, an order service can receive a repository rather than constructing a concrete database repository itself.</p>
+        <ul>
+          <li><strong>Constructor injection:</strong> dependencies are constructor parameters. It makes required dependencies explicit, supports immutable fields, and is generally the preferred choice.</li>
+          <li><strong>Setter injection:</strong> dependencies are supplied through setters; useful for optional or reconfigurable dependencies.</li>
+          <li><strong>Field injection:</strong> dependencies are written directly into fields, commonly using annotations. It is concise but hides requirements and makes plain unit testing harder; constructor injection is usually preferable.</li>
+        </ul>
+        <p>DI improves separation of concerns and supports substituting implementations (for example, a real repository in production and a fake in a unit test). It does not remove the need to design clear interfaces and responsibilities.</p>
+      </section>
+
+      <section class="card" id="container">
+        <h2>3. The IoC container</h2>
+        <p>The container reads configuration metadata, creates and configures beans, resolves dependencies, and manages lifecycle callbacks. Its central interfaces are:</p>
+        <ul>
+          <li><strong><code>BeanFactory</code>:</strong> the basic container contract for obtaining beans and wiring dependencies. Implementations can create beans lazily.</li>
+          <li><strong><code>ApplicationContext</code>:</strong> a richer, commonly used container built on the BeanFactory model. It adds features such as application events, internationalized messages, resource loading, and integration with framework facilities.</li>
+        </ul>
+        <p>Common contexts include <code>AnnotationConfigApplicationContext</code> for Java/annotation configuration and web-specific contexts in web applications. Spring Boot typically creates and configures the application context for you.</p>
+        <h3>High-level startup sequence</h3>
+        <ol>
+          <li>Load configuration and register bean definitions.</li>
+          <li>Run factory-level customization and register post-processors.</li>
+          <li>Instantiate beans as needed (many singleton beans are created during context startup), resolve dependencies, and apply bean post-processors.</li>
+          <li>Use the configured objects; close the context when its owner is finished so destruction callbacks can run.</li>
+        </ol>
+      </section>
+
+      <section class="card" id="beans">
+        <h2>4. Beans and bean definitions</h2>
+        <p>A <strong>Spring bean</strong> is an object instantiated, assembled, or otherwise managed by a Spring container. A bean definition is the metadata describing how to create and configure that object: its class, constructor arguments, properties, scope, lifecycle methods, qualifiers, and other settings.</p>
+        <p>Beans may be application services, repositories, controllers, configuration objects, third-party library objects, or infrastructure collaborators. Not every Java object must be a bean.</p>
+        <h3>Finding and identifying beans</h3>
+        <ul>
+          <li><code>@Component</code> marks a general component for scanning.</li>
+          <li><code>@Service</code>, <code>@Repository</code>, and <code>@Controller</code> are specialized component stereotypes that communicate intent (and can enable related framework behavior).</li>
+          <li><code>@Bean</code> on a method in a configuration class explicitly registers the method's returned object as a bean. This is particularly useful for configuring third-party types.</li>
+          <li>XML and programmatic registration can also define beans.</li>
+        </ul>
+        <h3>Choosing among beans</h3>
+        <p>When several beans satisfy one dependency, use <code>@Primary</code> to designate a default or <code>@Qualifier</code> to select a named/qualified candidate. Prefer meaningful qualifiers over relying on accidental class names. Circular dependencies usually indicate tightly coupled design; refactor the responsibilities rather than treating a cycle as a normal wiring pattern.</p>
+      </section>
+
+      <section class="card" id="configuration">
+        <h2>5. Configuration styles and annotations</h2>
+        <h3>Java configuration</h3>
+        <p><code>@Configuration</code> declares a source of bean definitions; methods annotated with <code>@Bean</code> provide instances. Component scanning with <code>@ComponentScan</code> discovers stereotype-annotated classes. Java configuration is type-aware and works well with modern Spring applications.</p>
+        <h3>Annotation-based component configuration</h3>
+        <p>Annotations such as <code>@Autowired</code> request dependency resolution; <code>@Value</code> injects a value or expression; <code>@Qualifier</code> disambiguates a candidate; and <code>@Lazy</code> can defer instantiation. Spring can often infer a single constructor, so <code>@Autowired</code> is not always necessary on that constructor.</p>
+        <h3>XML configuration</h3>
+        <p>XML declares beans and properties outside Java classes. It remains useful in legacy systems and some integration scenarios. XML and annotation/Java configuration can coexist, though a project should keep configuration understandable and avoid duplicate definitions.</p>
+        <h3>Externalized values and profiles</h3>
+        <p>Use properties or environment-backed configuration for deployment-specific values instead of hard-coding them in components. Profiles (for example, <code>@Profile</code>) enable environment-specific bean definitions. Keep secrets out of source control and inject them through a secure configuration mechanism.</p>
+        <h3>Autowiring and resolution</h3>
+        <p>Spring resolves a dependency primarily by type, then uses qualifiers, primary status, names, and other available metadata where applicable. Explicit constructors and narrow interfaces make wiring easier to reason about than broad, implicit dependencies.</p>
+      </section>
+
+      <section class="card" id="lifecycle">
+        <h2>6. Bean lifecycle, scopes, and extension points</h2>
+        <h3>Lifecycle</h3>
+        <p>Spring can call initialization callbacks after dependency injection and destruction callbacks when a managed context shuts down. Common approaches include <code>@PostConstruct</code> and <code>@PreDestroy</code> (Jakarta annotations in modern Spring generations), <code>InitializingBean</code>/<code>DisposableBean</code>, or custom init/destroy method names. Annotation package availability depends on the Spring/Jakarta version in use. Keep callbacks short; expensive work and external resources need deliberate startup/shutdown handling.</p>
+        <h3>Bean scopes</h3>
+        <ul>
+          <li><strong>Singleton:</strong> one shared bean instance per bean definition per container; it is Spring's common default. It does not mean one instance for the entire JVM.</li>
+          <li><strong>Prototype:</strong> a new instance is created when requested from the container. Spring does not manage the complete destruction lifecycle of prototype instances.</li>
+          <li><strong>Request and session:</strong> web-aware scopes create instances associated with an HTTP request or session.</li>
+          <li><strong>Application and WebSocket:</strong> additional scopes are available in applicable web environments.</li>
+        </ul>
+        <p>Injecting a shorter-lived scoped object into a longer-lived singleton may require a scoped proxy or provider so the right instance is resolved at the right time.</p>
+        <h3>Container extension points</h3>
+        <p><code>BeanFactoryPostProcessor</code> can customize bean-definition metadata before ordinary beans are created. <code>BeanPostProcessor</code> can inspect or wrap bean instances around initialization; framework features such as proxy creation use this kind of extension. These are powerful infrastructure hooks and should be used carefully.</p>
+        <p>“Aware” interfaces (such as <code>BeanNameAware</code> or <code>ApplicationContextAware</code>) let a bean request container infrastructure details. Prefer ordinary DI for application dependencies; using Aware callbacks can couple a component to Spring.</p>
+      </section>
+
+      <section class="card" id="services">
+        <h2>7. Other Spring Core container services</h2>
+        <ul>
+          <li><strong>Resource abstraction:</strong> <code>Resource</code> and <code>ResourceLoader</code> provide a consistent way to access classpath, filesystem, URL, and other resources.</li>
+          <li><strong>Application events:</strong> publish and handle application-level events with the event publisher and listeners such as <code>@EventListener</code>. Events can decouple components, but are not a substitute for durable messaging.</li>
+          <li><strong>Internationalization:</strong> <code>MessageSource</code> resolves locale-specific messages from configured bundles.</li>
+          <li><strong>Type conversion and formatting:</strong> convert values between types and format values for display or binding through conversion/formatter infrastructure.</li>
+          <li><strong>Validation:</strong> Spring integrates validation abstractions and commonly integrates with Jakarta Bean Validation providers; exact APIs depend on the Spring generation.</li>
+          <li><strong>SpEL:</strong> the Spring Expression Language can evaluate expressions in supported configuration and framework contexts. Expressions should be controlled and not built from untrusted input.</li>
+          <li><strong>Data binding:</strong> bind and convert property values to object properties in supported contexts.</li>
+          <li><strong>Task execution:</strong> abstractions such as task executors and schedulers help integrate asynchronous or scheduled work when configured.</li>
+        </ul>
+      </section>
+
+      <section class="card" id="aop">
+        <h2>8. Spring AOP</h2>
+        <p>Aspect-oriented programming modularizes <strong>cross-cutting concerns</strong>—behavior that applies across multiple components, such as transaction boundaries, security checks, or logging. Spring AOP commonly uses runtime proxies around Spring-managed objects.</p>
+        <ul>
+          <li><strong>Aspect:</strong> a module containing cross-cutting behavior.</li>
+          <li><strong>Join point:</strong> a point during execution where behavior can be applied; Spring proxy-based AOP primarily intercepts method execution.</li>
+          <li><strong>Pointcut:</strong> a predicate selecting join points.</li>
+          <li><strong>Advice:</strong> code run before, after, or around selected execution.</li>
+          <li><strong>Target and proxy:</strong> the target is the underlying object; callers interact through a proxy that can apply advice.</li>
+        </ul>
+        <p>Proxy-based AOP has limits: self-invocation may bypass the proxy, and only calls that pass through the proxy are advised. It is distinct from AspectJ's broader weaving approach. Use AOP for genuinely cross-cutting behavior, not to obscure ordinary business flow.</p>
+      </section>
+
+      <section class="card" id="modules">
+        <h2>9. Core packages, related modules, and integration</h2>
+        <p>The Spring Framework is organized into modules. The core container includes foundational packages often described as Core, Beans, Context, and Expression (SpEL). Other framework modules provide AOP, data access/transactions, web/servlet, messaging, and testing features. Availability and package details vary by Spring Framework version.</p>
+        <p>Spring Core is the base for higher-level modules and integrates with Java libraries and application servers. Spring Boot is a separate project that simplifies Spring application setup and deployment; it uses the Spring Framework but is not synonymous with Spring Core. Spring Data, Spring Security, and Spring MVC are also distinct projects/modules.</p>
+        <h3>Typical application wiring</h3>
+        <p>A configuration class or component scan registers an interface implementation as a bean; a service receives that interface through its constructor; the container resolves the matching bean; and the application context coordinates the component lifecycle. Higher-level features can add proxies or listeners around those components.</p>
+      </section>
+
+      <section class="card" id="testing">
+        <h2>10. Testing Spring applications</h2>
+        <p>Constructor-injected classes can often be tested as plain Java objects by passing fakes or mocks directly, without starting Spring. Use a Spring test context when the behavior under test depends on actual configuration, bean resolution, proxies, or framework integration.</p>
+        <ul>
+          <li>Test business behavior separately from container wiring where possible.</li>
+          <li>Use focused context tests to verify configuration and bean selection.</li>
+          <li>Use the Spring TestContext Framework and compatible test integrations for context lifecycle and test support.</li>
+          <li>Do not start a full application context for every small unit test unless the test requires it.</li>
+        </ul>
+      </section>
+
+      <section class="card" id="practice">
+        <h2>11. Best practices and common pitfalls</h2>
+        <ul>
+          <li>Prefer constructor injection for required dependencies, and keep constructors and components focused.</li>
+          <li>Depend on interfaces or stable abstractions where that helps independent testing and implementation choice.</li>
+          <li>Keep business logic out of configuration classes and lifecycle callbacks.</li>
+          <li>Use scopes intentionally; remember singleton beans are shared and should not keep unsafe mutable per-request state.</li>
+          <li>Resolve multiple candidates explicitly with qualifiers or a deliberate primary bean.</li>
+          <li>Keep configuration consistent, externalize environment-specific values, and protect secrets.</li>
+          <li>Avoid circular dependencies, excessive container lookups, and unnecessary Aware coupling.</li>
+          <li>Understand proxy boundaries when using AOP or proxy-based framework features.</li>
+          <li>Choose Spring/Jakarta APIs that match the versions in your project; package names and supported Java versions evolve.</li>
+        </ul>
+      </section>
+
+      <section class="card" id="glossary">
+        <h2>12. Quick glossary</h2>
+        <ul>
+          <li><strong>IoC:</strong> transferring control of object creation/wiring to a container.</li>
+          <li><strong>DI:</strong> providing an object's dependencies from outside that object.</li>
+          <li><strong>Bean:</strong> an object managed by a Spring container.</li>
+          <li><strong>Bean definition:</strong> metadata describing a bean and how it is configured.</li>
+          <li><strong>BeanFactory:</strong> the basic Spring container abstraction.</li>
+          <li><strong>ApplicationContext:</strong> a richer container adding common application services.</li>
+          <li><strong>Scope:</strong> the lifecycle/visibility rules for bean instances.</li>
+          <li><strong>Pointcut/advice:</strong> where AOP applies and what it runs there.</li>
+          <li><strong>Proxy:</strong> a stand-in object that can add behavior around calls to a target.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Ready to check your understanding?</h2>
+        <p>Write a concise explanation in your own words. The assessment looks for Spring Core concepts together with explanatory context; repeating isolated keywords alone is not enough.</p>
+        <div class="actions"><a class="button" href="test.html">Test</a></div>
+      </section>
+      <p class="footer">Spring Core is a broad framework foundation; consult the documentation for the exact Spring version used by your project.</p>
+    </div>
+  </main>
+</body>
+</html>
