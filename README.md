@@ -1,33 +1,30 @@
-# Spring Core Learning and Assessment
+# Spring JDBC Learning and Assessment
 
-A small Java 25+ Maven WAR application with a Spring Core learning page, a test form, server-side JSP verification, and a results page.
+A Java 21 Maven WAR application with a Spring JDBC learning page, a test form, server-side JSP verification, and a results page.
 
 ## Run it
 
-Build with JDK 25 or newer and ensure `JAVA_HOME` points to that JDK.
-
-This project uses JSP and the `javax.servlet` API, so deploy it to a Servlet 4.0-compatible container such as Apache Tomcat 9. Build the WAR from the project directory:
+Build with JDK 21 or newer and ensure `JAVA_HOME` points to that JDK:
 
 ```sh
 mvn clean package
 ```
 
-Copy `target/springcore-learning.war` into Tomcat 9's `webapps` directory, start Tomcat, and open:
+This creates `target/springjdbc-learning.war`. Deploy it to the `webapps` directory of a Servlet 4.0-compatible container such as Apache Tomcat 9, start Tomcat, and open:
 
 ```text
-http://localhost:8080/springcore-learning/
+http://localhost:8080/springjdbc-learning/
 ```
 
-The app's welcome page is `about.html`. Open it directly at `/springcore-learning/about.html` if needed. A static-file preview or `file://` URL cannot execute JSP; the test must be submitted through the running servlet container.
+The welcome page is `about.html`. Open it at `/springjdbc-learning/about.html` if needed. A static-file preview or `file://` URL cannot run JSP; submit the test through the running servlet container.
 
 ## Requirements and scoring
 
-- Name: 1–10 ASCII letters, first letter uppercase, no spaces or punctuation.
-- Email: a valid-looking address with a `@gmail.com` domain. For example, `abc@gmail.com` is valid; other domains are rejected.
-- Summary: required, maximum 100 words.
-- The summary must explain at least one recognized Spring Core topic; listing unrelated words or unmatched keywords is rejected with a summary-specific message.
-- All submission validation is performed only in `verification.jsp`. The browser script displays a word count and submits URL-encoded fields but does not enforce the rules.
-- Results are calculated by `ScoreEvaluator`: up to 8 points for assessed Spring Core concept groups, plus 1 point for 50–79 words or 2 points for 80–100 words, capped at 10.
-- Concept points require both a concept term and explanatory context. This is a deterministic keyword/context rubric, not a claim of full natural-language semantic understanding or human grading.
+- Name: 1–10 ASCII letters, first letter uppercase, no spaces or punctuation. The verifier returns a field-specific message for lowercase initials, special characters, and names over 10 characters.
+- Email: a valid-looking address ending in `@gmail.com`; other domains are rejected.
+- Summary: required and limited to 100 words. It must explain at least one recognized Spring JDBC topic.
+- All submission validation and scoring happen in `verification.jsp`. The browser script only displays the word count and submits URL-encoded form values.
+- `ScoreEvaluator` checks eight Spring JDBC topic groups. A topic earns recognition when its concept and explanatory context appear in the same sentence. Length adds 1 point for 50–79 words or 2 points for 80–100 words. The total is capped at 10.
+- This is a transparent keyword/context rubric, not a claim of full natural-language understanding or human grading.
 
-`verification.jsp` is called asynchronously by the form and does not render a user-facing verification page. The score is stored in the server session and delivered to `result.html` through `result-data.jsp`.
+The verification endpoint returns JSON to the form script without displaying an intermediate verification page. The score is stored in the server session and delivered to `result.html` through `result-data.jsp`.

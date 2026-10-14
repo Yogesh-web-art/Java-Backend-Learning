@@ -1,5 +1,5 @@
 <%@ page contentType="application/json; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="com.example.springcore.ScoreEvaluator.Evaluation" %>
+<%@ page import="com.example.springjdbc.ScoreEvaluator.Evaluation" %>
 <%@ page import="java.util.List" %>
 <%!
 private String jsonEscape(String value) {
@@ -36,8 +36,8 @@ private void appendArray(StringBuilder json, List<String> values) {
 %>
 <%
 response.setHeader("Cache-Control", "no-store");
-Evaluation evaluation = (Evaluation) session.getAttribute("springCoreResult");
-String studentName = (String) session.getAttribute("springCoreStudentName");
+Evaluation evaluation = (Evaluation) session.getAttribute("springJdbcResult");
+String studentName = (String) session.getAttribute("springJdbcStudentName");
 if (evaluation == null || studentName == null) {
     out.print("{\"available\":false}");
     return;

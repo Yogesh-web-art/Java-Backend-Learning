@@ -30,7 +30,7 @@
       if (!data.available) {
         status.textContent = "There is no submitted result for this browser session. Complete the test first.";
         document.getElementById("return-link").href = "test.html";
-        document.getElementById("return-link").textContent = "Go to the Test";
+        document.getElementById("return-link").textContent = "Go to the Spring JDBC Test";
         return;
       }
 
