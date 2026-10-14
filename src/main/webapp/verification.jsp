@@ -1,6 +1,6 @@
 <%@ page contentType="application/json; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="com.example.springcore.ScoreEvaluator" %>
-<%@ page import="com.example.springcore.ScoreEvaluator.Evaluation" %>
+<%@ page import="com.example.springjdbc.ScoreEvaluator" %>
+<%@ page import="com.example.springjdbc.ScoreEvaluator.Evaluation" %>
 <%
 response.setHeader("Cache-Control", "no-store");
 if (!"POST".equalsIgnoreCase(request.getMethod())) {
@@ -28,7 +28,7 @@ if (name == null || name.isEmpty()) {
 } else if (email == null || !email.matches("[A-Za-z0-9._%+-]+@gmail\\.com")) {
     error = "Enter a valid email address ending in @gmail.com.";
 } else if (summary == null || summary.trim().isEmpty()) {
-    error = "Please enter your Spring Core summary.";
+    error = "Please enter your Spring JDBC summary.";
 } else {
     int words = ScoreEvaluator.countWords(summary);
     if (words > 100) {
@@ -36,7 +36,7 @@ if (name == null || name.isEmpty()) {
     } else {
         evaluation = ScoreEvaluator.evaluate(summary);
         if (evaluation.getMatchedTopics().isEmpty()) {
-            error = "Your summary does not explain any recognized Spring Core concepts. Please review the guide and try again.";
+            error = "Your summary does not explain any recognized Spring JDBC concepts. Please review the guide and try again.";
         }
     }
 }
@@ -47,7 +47,7 @@ if (error != null) {
     return;
 }
 
-session.setAttribute("springCoreResult", evaluation);
-session.setAttribute("springCoreStudentName", name);
+session.setAttribute("springJdbcResult", evaluation);
+session.setAttribute("springJdbcStudentName", name);
 out.print("{\"success\":true}");
 %>
