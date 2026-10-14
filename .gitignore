@@ -1,0 +1,5 @@
+# Maven build output
+target/
+
+# Hibernate project build output
+hibernate-learning/target/
