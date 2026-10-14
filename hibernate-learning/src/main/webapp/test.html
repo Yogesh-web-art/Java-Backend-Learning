@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hibernate Test</title>
+  <link rel="stylesheet" href="styles.css?v=20261014-hibernate">
+</head>
+<body class="test-page">
+  <header class="topbar">
+    <p class="eyebrow">HIBERNATE ORM · KNOWLEDGE CHECK</p>
+    <h1>Hibernate Test</h1>
+    <p>Show what you understood. Explain the ideas in your own words and get feedback on the concepts you covered.</p>
+  </header>
+  <main class="container test-layout">
+    <aside class="test-guide">
+      <section class="panel guide-card">
+        <span class="step-label">BEFORE YOU BEGIN</span>
+        <h2>A quick guide</h2>
+        <p class="muted">A few simple requirements help us process your assessment.</p>
+        <ul class="rule-list">
+          <li><span class="rule-icon">01</span><span><strong>Your name</strong><small>Start with a capital letter; English letters only; no more than 10 characters.</small></span></li>
+          <li><span class="rule-icon">02</span><span><strong>Your email</strong><small>Enter a valid address ending in <code>@gmail.com</code>.</small></span></li>
+          <li><span class="rule-icon">03</span><span><strong>Your summary</strong><small>Write up to 100 words and explain at least one Hibernate concept.</small></span></li>
+        </ul>
+        <div class="guide-callout">
+          <strong>Tip</strong>
+          <p>Explain what a concept does, not just its name. For example, describe how a Hibernate Session tracks managed entities and synchronizes changes.</p>
+        </div>
+        <a class="guide-back" href="about.html">Review the Hibernate guide</a>
+      </section>
+    </aside>
+
+    <section class="panel form-card">
+      <div class="form-heading">
+        <div>
+          <span class="step-label">YOUR RESPONSE</span>
+          <h2>Write your summary</h2>
+          <p class="muted">Your name, email, and summary are checked securely when you submit.</p>
+        </div>
+        <span class="assessment-mark" aria-hidden="true">✎</span>
+      </div>
+      <div class="form-divider"></div>
+      <form id="test-form" action="verification.jsp" method="post">
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" autocomplete="name" placeholder="e.g. Yogeshwar">
+        </div>
+        <div class="field">
+          <label for="email">Email id</label>
+          <input id="email" name="email" type="text" autocomplete="email" placeholder="you@gmail.com">
+        </div>
+        <div class="field">
+          <label for="summary">Summary</label>
+          <textarea id="summary" name="summary" aria-describedby="summary-help word-count" placeholder="In your own words, explain the Hibernate ideas you learned..."></textarea>
+          <div class="summary-meta">
+            <p id="summary-help" class="hint">Explain a concept and what it does. Keywords alone are not enough.</p>
+            <div id="word-count" class="count" aria-live="polite">0 / 100 words</div>
+          </div>
+        </div>
+        <p id="form-status" class="status" role="status" aria-live="polite"></p>
+        <button class="button submit-button" type="submit">Submit assessment <span aria-hidden="true">→</span></button>
+      </form>
+    </section>
+  </main>
+  <script src="test.js?v=20261014-hibernate"></script>
+</body>
+</html>

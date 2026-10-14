@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A practical guide to Hibernate ORM, entity mapping, sessions, persistence contexts, queries, transactions, relationships, and performance.">
+  <title>About Hibernate</title>
+  <link rel="stylesheet" href="styles.css?v=20261014-hibernate">
+</head>
+<body>
+  <header class="topbar">
+    <p class="eyebrow">JAVA PERSISTENCE · HIBERNATE ORM</p>
+    <h1>About Hibernate</h1>
+    <p>A practical guide to mapping Java objects to relational data, managing persistence, and writing efficient database applications.</p>
+  </header>
+  <main class="container">
+    <aside class="panel guide-card">
+      <span class="step-label">IN THIS GUIDE</span>
+      <nav aria-label="Page contents">
+        <ul class="topic-list">
+          <li><a href="#overview">Hibernate and ORM</a></li>
+          <li><a href="#mapping">Entities and mapping</a></li>
+          <li><a href="#sessions">SessionFactory and Session</a></li>
+          <li><a href="#lifecycle">Entity lifecycle</a></li>
+          <li><a href="#queries">CRUD, HQL, and Criteria</a></li>
+          <li><a href="#relationships">Associations and cascades</a></li>
+          <li><a href="#transactions">Transactions</a></li>
+          <li><a href="#performance">Fetching and performance</a></li>
+          <li><a href="#configuration">Configuration and schema</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <section id="overview" class="panel guide-card">
+      <h2>1. Hibernate and object-relational mapping</h2>
+      <p>Hibernate ORM is an object-relational mapping framework for Java. It maps Java classes and objects to relational database tables and rows, so applications can work with domain objects while Hibernate handles much of the SQL and JDBC plumbing.</p>
+      <p>Hibernate implements Jakarta Persistence (JPA) as a provider and also exposes its own native APIs. JPA is the standard set of persistence interfaces and annotations; Hibernate is one implementation with additional features. ORM reduces repetitive mapping code, but developers still need to understand SQL, database constraints, transactions, and query behavior.</p>
+    </section>
+
+    <section id="mapping" class="panel guide-card">
+      <h2>2. Entities and mapping metadata</h2>
+      <p>An entity is a Java class whose instances are persisted. With annotation-based mapping, <code>@Entity</code> marks a class as persistent, <code>@Table</code> can select its table, <code>@Id</code> declares the primary key, and <code>@GeneratedValue</code> configures identifier generation. <code>@Column</code> customizes a field or property mapping.</p>
+      <p>Mapping may use field access or property access; keep the chosen access style consistent. Identifiers should be stable and fit the database key strategy. Use constraints and nullability deliberately, and represent database values with suitable Java types. XML mapping is also available when metadata should be kept outside the classes.</p>
+    </section>
+
+    <section id="sessions" class="panel guide-card">
+      <h2>3. SessionFactory, Session, and persistence context</h2>
+      <p>A <code>SessionFactory</code> is a heavyweight, thread-safe object built for a database configuration and commonly shared by the application. It creates lightweight, non-thread-safe <code>Session</code> instances. A Session is a unit of work used to interact with persistent objects.</p>
+      <p>A Session owns a persistence context, which keeps track of managed entity instances and their identity. Changes to managed objects can be detected and synchronized to the database when the session flushes. A Session should have a clear, short lifetime, usually scoped to a request or transaction; do not share it between concurrent threads.</p>
+    </section>
+
+    <section id="lifecycle" class="panel guide-card">
+      <h2>4. Entity lifecycle and dirty checking</h2>
+      <p>Hibernate entities move through lifecycle states. A transient object is new and not associated with a persistence context. A persistent (managed) object is tracked by an open context. A detached object was managed previously but is no longer tracked. A removed object is scheduled for deletion.</p>
+      <p>Dirty checking detects changes to managed entities and synchronizes them during flush, often without an explicit update call. Flush sends pending SQL but is distinct from transaction commit. Detaching or closing the context stops automatic tracking, so later changes to detached objects are not automatically saved.</p>
+    </section>
+
+    <section id="queries" class="panel guide-card">
+      <h2>5. CRUD, HQL, JPQL, and Criteria</h2>
+      <p>Hibernate supports persistence and retrieval operations for creating, reading, updating, and deleting data. HQL (Hibernate Query Language) and JPQL query entity names and properties rather than database table and column names. The Criteria API builds queries programmatically, which can help when filters are dynamic.</p>
+      <p>Use named or positional parameters instead of concatenating user input into query strings; parameter binding helps prevent injection and improves query reuse. Select only the data the use case needs, paginate large result sets, and inspect generated SQL when diagnosing performance or correctness.</p>
+    </section>
+
+    <section id="relationships" class="panel guide-card">
+      <h2>6. Associations, ownership, and cascading</h2>
+      <p>Associations model relationships between entities. <code>@OneToOne</code>, <code>@OneToMany</code>, <code>@ManyToOne</code>, and <code>@ManyToMany</code> describe common cardinalities. The owning side usually controls the foreign-key update; a <code>mappedBy</code> setting identifies the inverse side of a bidirectional relationship.</p>
+      <p>Cascade options propagate selected operations, such as persist or remove, from one entity to related entities. Cascades are not the same as database cascade constraints. Choose cascade rules intentionally, keep both sides of bidirectional associations consistent, and avoid cascading deletes across data that has an independent lifecycle.</p>
+    </section>
+
+    <section id="transactions" class="panel guide-card">
+      <h2>7. Transactions and consistency</h2>
+      <p>Transactions group database changes into an atomic unit: they commit together or roll back on failure. A Hibernate Session is commonly used within a transaction, and writes should not be treated as durable until the transaction commits.</p>
+      <p>In Spring applications, transaction boundaries are often declared with <code>@Transactional</code> or managed with a transaction manager. Keep transaction scopes appropriate to the operation, handle failures explicitly, and understand isolation and propagation settings where concurrent access matters.</p>
+    </section>
+
+    <section id="performance" class="panel guide-card">
+      <h2>8. Fetching, caching, and performance</h2>
+      <p>Lazy fetching defers loading an association until it is accessed; eager fetching loads it earlier. Neither is universally best. Poor fetch choices can cause the N+1 query problem, where one query loads a collection and additional queries load each related row. Fetch joins, entity graphs, batching, or tailored projections can reduce unnecessary trips.</p>
+      <p>The first-level cache is the Session's persistence context. An optional second-level cache is shared across sessions and requires careful configuration and invalidation. Measure actual SQL and query counts, avoid loading large graphs needlessly, and use pagination or batch operations for large workloads.</p>
+    </section>
+
+    <section id="configuration" class="panel guide-card">
+      <h2>9. Configuration, dialects, and schema management</h2>
+      <p>Hibernate needs database connection settings, mapping metadata, and a dialect appropriate for the database. Configuration can be supplied through properties, <code>hibernate.cfg.xml</code>, framework configuration, or JPA persistence configuration. Keep credentials outside source control and configure connection pooling for the runtime environment.</p>
+      <p>Schema-generation settings can create or update tables during development, but production schema changes should normally be managed with explicit database migration tools. A dialect helps Hibernate generate database-specific SQL; it does not replace knowledge of the target database's types, indexes, constraints, or capabilities.</p>
+    </section>
+
+    <section class="panel guide-card">
+      <h2>Putting it together</h2>
+      <p>A typical application configures persistence, opens a Session or uses a JPA EntityManager, begins a transaction, loads or changes entities, and commits or rolls back. Effective Hibernate use combines correct mappings with explicit transaction boundaries, safe query parameters, thoughtful fetching, and tests against the actual database behavior.</p>
+      <p>After reviewing the guide, explain the Hibernate ideas you learned in your own words. Your assessment checks concept explanations rather than awarding topic points for isolated keywords.</p>
+      <a class="button" href="test.html">Take the Hibernate Test <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+</body>
+</html>
