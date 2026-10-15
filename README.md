@@ -1,10 +1,10 @@
 # Spring JDBC Learning and Assessment
 
-A Java 21 Maven WAR application with a Spring JDBC learning page, a test form, server-side JSP verification, and a results page.
+A Java 25 Maven WAR application with a Spring JDBC learning page, a test form, server-side JSP verification, and a results page.
 
 ## Run it
 
-Build with JDK 21 or newer and ensure `JAVA_HOME` points to that JDK:
+Build with JDK 25 or newer and ensure `JAVA_HOME` points to that JDK:
 
 ```sh
 mvn clean package

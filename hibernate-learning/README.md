@@ -1,10 +1,10 @@
 # Hibernate Learning and Assessment
 
-A standalone Java 21 Maven WAR learning site about Hibernate ORM. It contains a guide, an assessment form, server-side JSP validation and scoring, and a results page. The lesson explains Hibernate; this assessment application itself does not connect to a database.
+A standalone Java 25 Maven WAR learning site about Hibernate ORM. It contains a guide, an assessment form, server-side JSP validation and scoring, and a results page. The lesson explains Hibernate; this assessment application itself does not connect to a database.
 
 ## Build and run
 
-Build with JDK 21 or newer:
+Build with JDK 25 or newer:
 
 ```sh
 mvn clean package
